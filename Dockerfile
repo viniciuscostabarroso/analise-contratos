@@ -32,4 +32,4 @@ COPY --from=frontend-builder /app/Frontend/build ./static
 EXPOSE 8080
 
 # Inicia com Gunicorn (compatível com WSGI)
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "1", "--timeout", "600", "main:app"]
+CMD exec gunicorn --bind 0.0.0.0:$PORT --workers 1 --timeout 600 main:app
