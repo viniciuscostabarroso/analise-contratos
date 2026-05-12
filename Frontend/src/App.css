@@ -1,329 +1,413 @@
-import React, { useState, useCallback } from "react";
-import { useDropzone } from "react-dropzone";
-import "./App.css";
+/* =============================================
+   VARIÁVEIS E RESET
+============================================= */
+:root {
+  --serv-blue: #003087;
+  --serv-blue-light: #0052cc;
+  --serv-red: #e30613;
+  --serv-red-light: #ff1a2b;
+  --bg-primary: #f0f4f8;
+  --bg-card: #ffffff;
+  --text-primary: #1a202c;
+  --text-secondary: #4a5568;
+  --text-muted: #718096;
+  --border: #e2e8f0;
+  --shadow: 0 2px 12px rgba(0, 48, 135, 0.08);
+  --shadow-hover: 0 8px 25px rgba(0, 48, 135, 0.15);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
 
-// ⚠️ Adicione o arquivo logo-servinformacion.png em src/assets/
-// Se não tiver o logo, comente a linha abaixo e use o texto no header.
-// import logo from "./assets/logo-servinformacion.png";
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-// =============================================
-// COMPONENTES AUXILIARES
-// =============================================
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
 
-const RiskBadge = ({ level }) => {
-  const map = {
-    alto:  { label: "Alto",  className: "badge-alto" },
-    medio: { label: "Médio", className: "badge-medio" },
-    baixo: { label: "Baixo", className: "badge-baixo" },
-  };
-  const config = map[level?.toLowerCase()] || { label: level, className: "badge-baixo" };
-  return <span className={`badge ${config.className}`}>{config.label}</span>;
-};
+/* =============================================
+   HEADER
+============================================= */
+.app-header {
+  background: linear-gradient(135deg, var(--serv-blue) 0%, #001a4d 100%);
+  color: white;
+  padding: 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
 
-const StatusBadge = ({ status }) => {
-  const map = {
-    presente: { label: "✔ Presente", className: "status-presente" },
-    ausente:  { label: "✘ Ausente",  className: "status-ausente" },
-    pendente: { label: "⚠ Pendente", className: "status-pendente" },
-  };
-  const config = map[status?.toLowerCase()] || { label: status, className: "status-pendente" };
-  return <span className={`status-badge ${config.className}`}>{config.label}</span>;
-};
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 32px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
 
-const SectionCard = ({ title, icon, children }) => (
-  <div className="section-card">
-    <h3 className="section-title">
-      <span className="section-icon">{icon}</span> {title}
-    </h3>
-    {children}
-  </div>
-);
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+  border-right: 2px solid rgba(255,255,255,0.3);
+  padding-right: 24px;
+}
 
-// =============================================
-// COMPONENTE PRINCIPAL
-// =============================================
+.logo-serv {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: white;
+}
 
-export default function App() {
-  const [file, setFile] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState(null);
-  const [error, setError] = useState(null);
+.logo-info {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.7);
+  margin-top: 2px;
+}
 
-  const onDrop = useCallback((acceptedFiles) => {
-    if (acceptedFiles.length > 0) {
-      setFile(acceptedFiles[0]);
-      setResult(null);
-      setError(null);
-    }
-  }, []);
+.logo-img { height: 48px; object-fit: contain; }
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: { "application/pdf": [".pdf"] },
-    maxFiles: 1,
-  });
+.header-title h1 {
+  font-size: 22px;
+  font-weight: 600;
+  color: white;
+}
 
-  const handleAnalyze = async () => {
-    if (!file) return;
-    setLoading(true);
-    setResult(null);
-    setError(null);
+.header-title p {
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+  margin-top: 4px;
+  font-weight: 400;
+}
 
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
+/* =============================================
+   MAIN
+============================================= */
+.main-content {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 24px 60px;
+}
 
-      const response = await fetch("/api/analyze", {
-        method: "POST",
-        body: formData,
-      });
+/* =============================================
+   UPLOAD SECTION
+============================================= */
+.upload-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
 
-      const data = await response.json();
+.dropzone {
+  width: 100%;
+  max-width: 680px;
+  border: 2.5px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 60px 40px;
+  text-align: center;
+  cursor: pointer;
+  background: var(--bg-card);
+  transition: all 0.25s ease;
+}
 
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || "Erro desconhecido na análise.");
-      }
+.dropzone:hover, .dropzone-active {
+  border-color: var(--serv-blue-light);
+  background: #eef3ff;
+  box-shadow: var(--shadow-hover);
+}
 
-      setResult(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+.dropzone-filled {
+  border-color: var(--serv-blue);
+  background: #f0f4ff;
+  border-style: solid;
+}
 
-  const handleReset = () => {
-    setFile(null);
-    setResult(null);
-    setError(null);
-  };
+.upload-icon { font-size: 52px; margin-bottom: 16px; }
+.file-icon { font-size: 52px; margin-bottom: 16px; }
 
-  const analysis = result?.analysis;
+.dropzone-text { font-size: 18px; font-weight: 600; color: var(--text-primary); }
+.dropzone-subtext { font-size: 14px; color: var(--text-secondary); margin-top: 8px; }
+.dropzone-hint {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--text-muted);
+  background: #f7fafc;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
 
-  return (
-    <div className="app-wrapper">
-      {/* HEADER */}
-      <header className="app-header">
-        <div className="header-inner">
-          <div className="header-logo">
-            {/* Se tiver o logo: <img src={logo} alt="Servinformacion" className="logo-img" /> */}
-            <div className="logo-text">
-              <span className="logo-serv">SERV</span>
-              <span className="logo-info">INFORMACION</span>
-            </div>
-          </div>
-          <div className="header-title">
-            <h1>Análise Inteligente de Documentos & Contratos</h1>
-            <p>Powered by Google Cloud Vertex AI · Gemini 2.5 Flash</p>
-          </div>
-        </div>
-      </header>
+.file-name { font-size: 18px; font-weight: 600; color: var(--serv-blue); }
+.file-size { font-size: 13px; color: var(--text-muted); margin-top: 6px; }
 
-      <main className="main-content">
-        {/* UPLOAD SECTION */}
-        {!result && (
-          <div className="upload-section">
-            <div
-              {...getRootProps()}
-              className={`dropzone ${isDragActive ? "dropzone-active" : ""} ${file ? "dropzone-filled" : ""}`}
-            >
-              <input {...getInputProps()} />
-              <div className="dropzone-content">
-                {file ? (
-                  <>
-                    <div className="file-icon">📄</div>
-                    <p className="file-name">{file.name}</p>
-                    <p className="file-size">{(file.size / 1024 / 1024).toFixed(2)} MB · PDF pronto para análise</p>
-                  </>
-                ) : (
-                  <>
-                    <div className="upload-icon">☁️</div>
-                    <p className="dropzone-text">
-                      {isDragActive ? "Solte o PDF aqui!" : "Arraste e solte um arquivo PDF aqui"}
-                    </p>
-                    <p className="dropzone-subtext">ou clique para selecionar</p>
-                    <span className="dropzone-hint">Suporta contratos, termos de referência, acordos e outros documentos PDF</span>
-                  </>
-                )}
-              </div>
-            </div>
+.btn-analyze {
+  background: linear-gradient(135deg, var(--serv-blue) 0%, var(--serv-blue-light) 100%);
+  color: white;
+  border: none;
+  padding: 16px 48px;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 15px rgba(0, 82, 204, 0.3);
+}
 
-            {file && !loading && (
-              <button className="btn-analyze" onClick={handleAnalyze}>
-                🔍 Analisar Documento com IA
-              </button>
-            )}
+.btn-analyze:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 82, 204, 0.4);
+}
 
-            {loading && (
-              <div className="loading-container">
-                <div className="spinner"></div>
-                <p className="loading-text">Analisando documento com Gemini 2.5 Flash...</p>
-                <p className="loading-subtext">Isso pode levar alguns segundos dependendo do tamanho do arquivo.</p>
-              </div>
-            )}
+/* LOADING */
+.loading-container { text-align: center; }
+.spinner {
+  width: 52px; height: 52px;
+  border: 4px solid var(--border);
+  border-top-color: var(--serv-blue);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 20px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 16px; font-weight: 600; color: var(--serv-blue); }
+.loading-subtext { font-size: 13px; color: var(--text-muted); margin-top: 8px; }
 
-            {error && (
-              <div className="error-box">
-                <strong>⚠ Erro na análise:</strong> {error}
-              </div>
-            )}
-          </div>
-        )}
+.error-box {
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+  border-left: 4px solid var(--serv-red);
+  border-radius: var(--radius-sm);
+  padding: 16px 20px;
+  color: #c53030;
+  max-width: 600px;
+  width: 100%;
+}
 
-        {/* RESULTS SECTION */}
-        {result && analysis && (
-          <div className="results-section">
-            {/* HEADER DO RESULTADO */}
-            <div className="result-header">
-              <div className="result-header-left">
-                <h2>{analysis.titulo_documento || result.file_name}</h2>
-                <p className="result-meta">
-                  📎 {result.file_name}
-                  {analysis.numero_paginas_analisadas > 0 && (
-                    <span> · {analysis.numero_paginas_analisadas} página(s)</span>
-                  )}
-                </p>
-              </div>
-              <button className="btn-reset" onClick={handleReset}>
-                ↩ Nova Análise
-              </button>
-            </div>
+/* =============================================
+   RESULTS SECTION
+============================================= */
+.results-section { display: flex; flex-direction: column; gap: 20px; }
 
-            {/* RESUMO EXECUTIVO */}
-            <div className="executive-summary">
-              <h3>📋 Resumo Executivo</h3>
-              <p>{analysis.resumo_executivo}</p>
-              <div className="summary-tags">
-                {analysis.valor_contrato && analysis.valor_contrato !== "Não especificado" && (
-                  <div className="tag">💰 {analysis.valor_contrato}</div>
-                )}
-                {analysis.objeto_contrato && (
-                  <div className="tag">📌 {analysis.objeto_contrato?.substring(0, 80)}{analysis.objeto_contrato?.length > 80 ? "..." : ""}</div>
-                )}
-              </div>
-            </div>
+.result-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  background: var(--bg-card);
+  padding: 24px 28px;
+  border-radius: var(--radius);
+  border-left: 5px solid var(--serv-blue);
+  box-shadow: var(--shadow);
+}
 
-            <div className="results-grid">
-              {/* PARTES ENVOLVIDAS */}
-              {analysis.partes_envolvidas?.length > 0 && (
-                <SectionCard title="Partes Envolvidas" icon="👥">
-                  <div className="parties-list">
-                    {analysis.partes_envolvidas.map((p, i) => (
-                      <div key={i} className="party-item">
-                        <span className="party-role">{p.papel}</span>
-                        <span className="party-name">{p.nome}</span>
-                        {p.documento && <span className="party-doc">{p.documento}</span>}
-                      </div>
-                    ))}
-                  </div>
-                </SectionCard>
-              )}
+.result-header-left h2 { font-size: 20px; color: var(--serv-blue); }
+.result-meta { font-size: 13px; color: var(--text-muted); margin-top: 6px; }
 
-              {/* DATAS E PRAZOS */}
-              {analysis.datas_e_prazos?.length > 0 && (
-                <SectionCard title="Datas & Prazos" icon="📅">
-                  <div className="dates-list">
-                    {analysis.datas_e_prazos.map((d, i) => (
-                      <div key={i} className="date-item">
-                        <span className="date-event">{d.evento}</span>
-                        <span className="date-value">{d.data_prazo}</span>
-                      </div>
-                    ))}
-                  </div>
-                </SectionCard>
-              )}
-            </div>
+.btn-reset {
+  background: transparent;
+  border: 1.5px solid var(--border);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+.btn-reset:hover { border-color: var(--serv-blue); color: var(--serv-blue); }
 
-            {/* PONTOS PRINCIPAIS */}
-            {analysis.pontos_principais?.length > 0 && (
-              <SectionCard title="Pontos Principais" icon="🎯">
-                <div className="points-grid">
-                  {analysis.pontos_principais.map((p, i) => (
-                    <div key={i} className="point-card">
-                      <h4>{p.topico}</h4>
-                      <p>{p.descricao}</p>
-                    </div>
-                  ))}
-                </div>
-              </SectionCard>
-            )}
+/* RESUMO EXECUTIVO */
+.executive-summary {
+  background: linear-gradient(135deg, var(--serv-blue) 0%, #001a4d 100%);
+  color: white;
+  padding: 28px 32px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-hover);
+}
 
-            {/* CLÁUSULAS IMPORTANTES */}
-            {analysis.clausulas_importantes?.length > 0 && (
-              <SectionCard title="Cláusulas Importantes" icon="⚖️">
-                <div className="clauses-list">
-                  {analysis.clausulas_importantes.map((c, i) => (
-                    <div key={i} className="clause-item">
-                      <div className="clause-header">
-                        <span className="clause-number">{c.numero_clausula}</span>
-                        <span className="clause-title">{c.titulo}</span>
-                      </div>
-                      <p className="clause-summary">{c.resumo}</p>
-                    </div>
-                  ))}
-                </div>
-              </SectionCard>
-            )}
+.executive-summary h3 { font-size: 16px; font-weight: 600; margin-bottom: 12px; opacity: 0.8; }
+.executive-summary p { font-size: 16px; line-height: 1.7; }
 
-            {/* OBRIGAÇÕES */}
-            <div className="results-grid">
-              {analysis.obrigacoes_contratante?.length > 0 && (
-                <SectionCard title="Obrigações do Contratante" icon="📌">
-                  <ul className="obligations-list">
-                    {analysis.obrigacoes_contratante.map((o, i) => (
-                      <li key={i}>{o}</li>
-                    ))}
-                  </ul>
-                </SectionCard>
-              )}
-              {analysis.obrigacoes_contratado?.length > 0 && (
-                <SectionCard title="Obrigações do Contratado" icon="📎">
-                  <ul className="obligations-list">
-                    {analysis.obrigacoes_contratado.map((o, i) => (
-                      <li key={i}>{o}</li>
-                    ))}
-                  </ul>
-                </SectionCard>
-              )}
-            </div>
+.summary-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.tag {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.25);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+}
 
-            {/* ALERTAS E RISCOS */}
-            {analysis.alertas_e_riscos?.length > 0 && (
-              <SectionCard title="Alertas & Riscos" icon="🚨">
-                <div className="risks-list">
-                  {analysis.alertas_e_riscos.map((r, i) => (
-                    <div key={i} className={`risk-item risk-${r.nivel?.toLowerCase()}`}>
-                      <div className="risk-header">
-                        <RiskBadge level={r.nivel} />
-                        <span className="risk-category">{r.categoria}</span>
-                      </div>
-                      <p className="risk-description">{r.descricao}</p>
-                    </div>
-                  ))}
-                </div>
-              </SectionCard>
-            )}
+/* SECTION CARD */
+.section-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 24px 28px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
 
-            {/* CHECKLIST DE VALIDAÇÃO */}
-            {analysis.checklist_validacao?.length > 0 && (
-              <SectionCard title="Checklist de Validação" icon="✅">
-                <div className="checklist-grid">
-                  {analysis.checklist_validacao.map((c, i) => (
-                    <div key={i} className="checklist-item">
-                      <StatusBadge status={c.status} />
-                      <span className="checklist-label">{c.item}</span>
-                    </div>
-                  ))}
-                </div>
-              </SectionCard>
-            )}
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--serv-blue);
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--bg-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-            <div className="result-footer">
-              <p>Análise gerada por <strong>Google Vertex AI · Gemini 2.5 Flash</strong> · Servinformacion Demo Platform</p>
-            </div>
-          </div>
-        )}
-      </main>
-    </div>
-  );
+.results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 768px) { .results-grid { grid-template-columns: 1fr; } }
+
+/* PARTES */
+.parties-list { display: flex; flex-direction: column; gap: 12px; }
+.party-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: var(--bg-primary);
+  border-radius: var(--radius-sm);
+}
+.party-role {
+  background: var(--serv-blue);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.party-name { font-weight: 600; font-size: 14px; }
+.party-doc { font-size: 12px; color: var(--text-muted); margin-left: auto; }
+
+/* DATAS */
+.dates-list { display: flex; flex-direction: column; gap: 10px; }
+.date-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--bg-primary);
+  border-radius: var(--radius-sm);
+  gap: 12px;
+}
+.date-event { font-size: 13px; color: var(--text-secondary); }
+.date-value { font-size: 13px; font-weight: 600; color: var(--serv-blue); white-space: nowrap; }
+
+/* PONTOS */
+.points-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.point-card {
+  background: var(--bg-primary);
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--serv-blue-light);
+}
+.point-card h4 { font-size: 13px; font-weight: 600; color: var(--serv-blue); margin-bottom: 8px; }
+.point-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+/* CLÁUSULAS */
+.clauses-list { display: flex; flex-direction: column; gap: 12px; }
+.clause-item {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.clause-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.clause-number {
+  background: var(--serv-blue);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.clause-title { font-weight: 600; font-size: 14px; }
+.clause-summary { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+/* OBRIGAÇÕES */
+.obligations-list { display: flex; flex-direction: column; gap: 8px; list-style: none; }
+.obligations-list li {
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 8px 12px 8px 24px;
+  position: relative;
+  background: var(--bg-primary);
+  border-radius: 6px;
+  line-height: 1.5;
+}
+.obligations-list li::before {
+  content: "▸";
+  position: absolute;
+  left: 10px;
+  color: var(--serv-blue);
+}
+
+/* RISCOS */
+.risks-list { display: flex; flex-direction: column; gap: 12px; }
+.risk-item {
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  border-left: 4px solid;
+}
+.risk-alto { background: #fff5f5; border-color: var(--serv-red); }
+.risk-medio { background: #fffaf0; border-color: #dd6b20; }
+.risk-baixo { background: #f0fff4; border-color: #38a169; }
+
+.risk-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.risk-category { font-size: 12px; font-weight: 500; color: var(--text-muted); }
+.risk-description { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+/* BADGES */
+.badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.badge-alto { background: #fed7d7; color: #c53030; }
+.badge-medio { background: #feebc8; color: #c05621; }
+.badge-baixo { background: #c6f6d5; color: #276749; }
+
+/* CHECKLIST */
+.checklist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
+}
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--bg-primary);
+  border-radius: var(--radius-sm);
+}
+.checklist-label { font-size: 13px; color: var(--text-secondary); }
+
+.status-badge { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+.status-presente { background: #c6f6d5; color: #276749; }
+.status-ausente { background: #fed7d7; color: #c53030; }
+.status-pendente { background: #feebc8; color: #c05621; }
+
+/* FOOTER */
+.result-footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 12px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
 }
