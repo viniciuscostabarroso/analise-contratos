@@ -2,7 +2,7 @@
 # STAGE 1: Build do Frontend React
 # =============================================
 FROM node:18-alpine AS frontend-builder
-WORKDIR /app/frontend
+WORKDIR /app/Frontend
 
 # Copia dependências e instala
 COPY Frontend/package.json ./
@@ -26,7 +26,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY Backend/ .
 
 # Copia o build do React para a pasta static
-COPY --from=frontend-builder /app/frontend/build ./static
+COPY --from=frontend-builder /app/Frontend/build ./static
 
 # Expõe a porta
 EXPOSE 8080
