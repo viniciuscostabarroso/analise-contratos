@@ -5,11 +5,11 @@ FROM node:18-alpine AS frontend-builder
 WORKDIR /app/frontend
 
 # Copia dependências e instala
-COPY frontend/package.json ./
+COPY Frontend/package.json ./
 RUN npm install
 
 # Copia o código e gera o build de produção
-COPY frontend/ .
+COPY Frontend/ .
 RUN npm run build
 
 # =============================================
@@ -19,11 +19,11 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # Instala dependências Python
-COPY backend/requirements.txt .
+COPY Backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copia o código do backend
-COPY backend/ .
+COPY Backend/ .
 
 # Copia o build do React para a pasta static
 COPY --from=frontend-builder /app/frontend/build ./static
