@@ -1,37 +1,48 @@
-# =============================================
-# STAGE 1: Build do Frontend React
-# =============================================
-FROM node:18-alpine AS frontend-builder
-WORKDIR /app/frontend
+# syntax=docker/dockerfile:1.7
 
-# Copia dependencias e instala
-COPY frontend/package.json ./
-RUN npm install
+# =============================================
+# STAGE 1: Build do frontend React
+# =============================================
+FROM node:20-alpine AS frontend-builder
+WORKDIR /build/frontend
 
-# Copia o codigo e gera o build de producao
-COPY frontend/ .
+ENV NODE_ENV=production \
+    CI=true
+
+COPY frontend/package*.json ./
+RUN if [ -f package-lock.json ]; then npm ci --omit=dev; else npm install --omit=dev; fi
+
+COPY frontend/ ./
 RUN npm run build
 
 # =============================================
-# STAGE 2: Backend Python (Flask + Gunicorn)
+# STAGE 2: Runtime Python (Flask + Gunicorn)
 # =============================================
-FROM python:3.11-slim
+FROM python:3.11-slim AS runtime
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PORT=8080 \
+    GUNICORN_WORKERS=1 \
+    GUNICORN_THREADS=8 \
+    GUNICORN_TIMEOUT=0 \
+    GUNICORN_GRACEFUL_TIMEOUT=30 \
+    MAX_QUEUE_SIZE=20
+
 WORKDIR /app
 
-# Instala dependencias Python
-COPY backend/requirements.txt .
+COPY backend/requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia o codigo do backend
-COPY backend/ .
+COPY backend/ ./
+COPY --from=frontend-builder /build/frontend/build ./static
 
-# Copia o build do React para a pasta static
-COPY --from=frontend-builder /app/frontend/build ./static
+RUN useradd --create-home --shell /usr/sbin/nologin appuser \
+    && chown -R appuser:appuser /app
+USER appuser
 
-# Expoe a porta
 EXPOSE 8080
-ENV PORT=8080
 
-# Inicia com Gunicorn (compativel com WSGI)
-CMD exec gunicorn --bind 0.0.0.0:${PORT} --workers 1 --timeout 600 main:app
-
+CMD ["gunicorn", "-c", "gunicorn.conf.py", "main:app"]

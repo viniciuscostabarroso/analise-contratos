@@ -1,5 +1,5 @@
-/* =============================================
-   VARIÁVEIS E RESET
+﻿/* =============================================
+   VARIÃVEIS E RESET
 ============================================= */
 :root {
   --serv-blue: #003087;
@@ -127,8 +127,8 @@ body {
   border-style: solid;
 }
 
-.upload-icon { font-size: 52px; margin-bottom: 16px; }
-.file-icon { font-size: 52px; margin-bottom: 16px; }
+.upload-icon { font-size: 18px; font-weight: 700; letter-spacing: 1px; margin-bottom: 16px; }
+.file-icon { font-size: 20px; font-weight: 700; letter-spacing: 1px; margin-bottom: 16px; color: var(--serv-blue); }
 
 .dropzone-text { font-size: 18px; font-weight: 600; color: var(--text-primary); }
 .dropzone-subtext { font-size: 14px; color: var(--text-secondary); margin-top: 8px; }
@@ -315,7 +315,7 @@ body {
 .point-card h4 { font-size: 13px; font-weight: 600; color: var(--serv-blue); margin-bottom: 8px; }
 .point-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
 
-/* CLÁUSULAS */
+/* CLÃUSULAS */
 .clauses-list { display: flex; flex-direction: column; gap: 12px; }
 .clause-item {
   padding: 16px;
@@ -335,9 +335,9 @@ body {
 .clause-title { font-weight: 600; font-size: 14px; }
 .clause-summary { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
 
-/* OBRIGAÇÕES */
-.obligations-list { display: flex; flex-direction: column; gap: 8px; list-style: none; }
-.obligations-list li {
+/* OBRIGAÃ‡Ã•ES */
+.obligations-list { display: flex; flex-direction: column; gap: 8px; }
+.obligation-item {
   font-size: 13px;
   color: var(--text-secondary);
   padding: 8px 12px 8px 24px;
@@ -346,8 +346,8 @@ body {
   border-radius: 6px;
   line-height: 1.5;
 }
-.obligations-list li::before {
-  content: "▸";
+.obligation-item::before {
+  content: ">";
   position: absolute;
   left: 10px;
   color: var(--serv-blue);
@@ -410,4 +410,135 @@ body {
   color: var(--text-muted);
   border-top: 1px solid var(--border);
   margin-top: 8px;
+}
+
+
+
+/* ESTADOS DE ERRO */
+.error-box-typed {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.error-box-typed p {
+  margin: 0;
+}
+
+/* NAVEGACAO POR ANCORAS */
+.anchor-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  box-shadow: var(--shadow);
+}
+.anchor-link {
+  font-size: 12px;
+  text-decoration: none;
+  color: var(--serv-blue);
+  background: #edf3ff;
+  border: 1px solid #d8e3fb;
+  border-radius: 999px;
+  padding: 6px 12px;
+  transition: all 0.2s ease;
+}
+.anchor-link:hover {
+  background: #dbe9ff;
+}
+
+/* LOADING PROGRESSIVO */
+.loading-block {
+  width: 100%;
+  max-width: 800px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+.loading-stage {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--serv-blue);
+  margin-bottom: 10px;
+}
+.progress-track {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: #e6edf8;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--serv-blue) 0%, var(--serv-blue-light) 100%);
+  transition: width 0.4s ease;
+}
+
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 14px;
+}
+.skeleton-card {
+  border-radius: 10px;
+  min-height: 90px;
+  background: linear-gradient(90deg, #edf2f7 25%, #dde5ef 50%, #edf2f7 75%);
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.2s linear infinite;
+}
+.skeleton-card-wide {
+  grid-column: span 2;
+  min-height: 70px;
+}
+.skeleton-card-tall {
+  min-height: 130px;
+}
+@keyframes skeleton-pulse {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+/* PAGINACAO */
+.pagination-controls {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.pagination-btn {
+  border: 1px solid var(--border);
+  background: white;
+  color: var(--text-secondary);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.pagination-status {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .skeleton-grid {
+    grid-template-columns: 1fr;
+  }
+  .skeleton-card-wide {
+    grid-column: auto;
+  }
+  .pagination-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
