@@ -384,7 +384,7 @@ export default function App() {
 
             {file && !loading && (
               <button className="btn-analyze" onClick={handleAnalyze} type="button">
-                Iniciar Analise Assincrona
+                Analisar documento
               </button>
             )}
 

@@ -340,7 +340,11 @@ def _process_analysis_job(job_id):
 
         response = model.generate_content(
             [pdf_part, ANALYSIS_PROMPT],
-            generation_config={"temperature": 0.1, "max_output_tokens": 8192},
+            generation_config={
+                "temperature": 0.1,
+                "max_output_tokens": 8192,
+                "response_mime_type": "application/json",
+            },
         )
 
         _set_job_stage(job_id, "parsing")
