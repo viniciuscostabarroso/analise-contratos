@@ -1,6 +1,7 @@
 ﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { AnchorNav, LoadingSkeleton, PaginatedList, RiskBadge, SectionCard, StatusBadge } from "./components";
+import logoServinformacion from "./assets/logo-servinformacion.png";
 import "./app.css";
 
 const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024;
@@ -344,10 +345,7 @@ export default function App() {
       <header className="app-header">
         <div className="header-inner">
           <div className="header-logo">
-            <div className="logo-text">
-              <span className="logo-serv">SERV</span>
-              <span className="logo-info">INFORMACION</span>
-            </div>
+            <img src={logoServinformacion} alt="Servinformacion" className="logo-img" />
           </div>
           <div className="header-title">
             <h1>Analise Inteligente de Documentos e Contratos</h1>

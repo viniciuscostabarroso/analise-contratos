@@ -46,12 +46,18 @@ body {
   gap: 24px;
 }
 
+.header-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 2px solid rgba(255,255,255,0.3);
+  padding-right: 24px;
+}
+
 .logo-text {
   display: flex;
   flex-direction: column;
   line-height: 1;
-  border-right: 2px solid rgba(255,255,255,0.3);
-  padding-right: 24px;
 }
 
 .logo-serv {
@@ -69,7 +75,11 @@ body {
   margin-top: 2px;
 }
 
-.logo-img { height: 48px; object-fit: contain; }
+.logo-img {
+  height: 52px;
+  width: auto;
+  object-fit: contain;
+}
 
 .header-title h1 {
   font-size: 22px;
