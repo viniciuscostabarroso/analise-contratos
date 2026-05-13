@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
+import ReactDOM from "react-dom/client";
 import { useDropzone } from "react-dropzone";
-import "./App.css";
+import "./app.css";
 
 // ⚠️ Adicione o arquivo logo-servinformacion.png em src/assets/
 // Se não tiver o logo, comente a linha abaixo e use o texto no header.
@@ -78,7 +79,13 @@ export default function App() {
         body: formData,
       });
 
-      const data = await response.json();
+      const responseText = await response.text();
+      let data = {};
+      try {
+        data = responseText ? JSON.parse(responseText) : {};
+      } catch {
+        throw new Error(`Resposta inesperada do servidor (HTTP ${response.status}).`);
+      }
 
       if (!response.ok || !data.success) {
         throw new Error(data.error || "Erro desconhecido na análise.");
@@ -327,3 +334,15 @@ export default function App() {
     </div>
   );
 }
+const rootElement = document.getElementById("root");
+
+if (rootElement) {
+  const root = ReactDOM.createRoot(rootElement);
+  root.render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
+}
+
+

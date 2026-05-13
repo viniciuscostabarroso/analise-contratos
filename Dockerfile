@@ -2,14 +2,14 @@
 # STAGE 1: Build do Frontend React
 # =============================================
 FROM node:18-alpine AS frontend-builder
-WORKDIR /app/Frontend
+WORKDIR /app/frontend
 
-# Copia dependências e instala
-COPY Frontend/package.json ./
+# Copia dependencias e instala
+COPY frontend/package.json ./
 RUN npm install
 
-# Copia o código e gera o build de produção
-COPY Frontend/ .
+# Copia o codigo e gera o build de producao
+COPY frontend/ .
 RUN npm run build
 
 # =============================================
@@ -18,18 +18,20 @@ RUN npm run build
 FROM python:3.11-slim
 WORKDIR /app
 
-# Instala dependências Python
-COPY Backend/requirements.txt .
+# Instala dependencias Python
+COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia o código do backend
-COPY Backend/ .
+# Copia o codigo do backend
+COPY backend/ .
 
 # Copia o build do React para a pasta static
-COPY --from=frontend-builder /app/Frontend/build ./static
+COPY --from=frontend-builder /app/frontend/build ./static
 
-# Expõe a porta
+# Expoe a porta
 EXPOSE 8080
+ENV PORT=8080
 
-# Inicia com Gunicorn (compatível com WSGI)
-CMD exec gunicorn --bind 0.0.0.0:$PORT --workers 1 --timeout 600 main:app
+# Inicia com Gunicorn (compativel com WSGI)
+CMD exec gunicorn --bind 0.0.0.0:${PORT} --workers 1 --timeout 600 main:app
+
